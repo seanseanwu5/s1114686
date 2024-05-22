@@ -1,15 +1,50 @@
 package com.example.s1114686
 
+import androidx.compose.ui.Modifier
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.s1114686.ui.theme.S1114686Theme
 
 class MainActivity : ComponentActivity() {
@@ -17,30 +52,94 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             S1114686Theme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
+                App()
             }
         }
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
+fun App() {
+    val navController = rememberNavController()
+    Scaffold(
+        topBar = {
+            TopAppBarWithMenu(navController)
+        }
+    ) {
+        NavHost(navController, startDestination = "JumpFirst") {
+            composable("JumpFirst") { FirstScreen(navController) }
+            composable("JumpSecond") { SecondScreen(navController) }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopAppBarWithMenu(navController: androidx.navigation.NavController) {
+    var showMenu by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    TopAppBar(
+        title = {
+            Image(
+                painter = painterResource(id = R.drawable.maria),
+                contentDescription = "App Logo",
+            )
+        },
+        actions = {
+            IconButton(
+                onClick = { showMenu = true }
+            ) {
+                Icon(Icons.Default.MoreVert, contentDescription = "More")
+            }
+            DropdownMenu(
+                expanded = showMenu, onDismissRequest = { showMenu = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("簡介") },
+                    onClick = {
+                        navController.navigate("JumpFirst")
+                        showMenu = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("主要機構") },
+                    onClick = {
+                        navController.navigate("JumpSecond")
+                        showMenu = false
+                    }
+                )
+            }
+        }
     )
 }
 
-@Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    S1114686Theme {
-        Greeting("Android")
+fun FirstScreen(navController: NavController) {
+    Box(
+        contentAlignment = Alignment.TopStart,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 70.dp)
+    ) {
+        Text(
+            text = "簡介",
+            color = Color.Blue
+        )
+    }
+}
+//git commit -m "v2_吳咏壎"
+@Composable
+fun SecondScreen(navController: NavController) {
+    Box(
+        contentAlignment = Alignment.TopStart,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 70.dp)
+    ) {
+        Text(
+            text = "主要機構",
+            color = Color.Red
+        )
     }
 }
