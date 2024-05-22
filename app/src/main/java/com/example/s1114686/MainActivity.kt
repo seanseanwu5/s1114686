@@ -29,9 +29,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
@@ -157,7 +155,6 @@ fun FirstScreen(navController: NavController) {
             Image(painter = painterResource(id = R.drawable.me), contentDescription = "這邊放自己的圖片")
         }
     }
-
     AnimatedVisibility(
         visible = true,
         enter = fadeIn(animationSpec = tween(3000)),
@@ -175,16 +172,70 @@ fun FirstScreen(navController: NavController) {
 
 @Composable
 fun SecondScreen(navController: NavController) {
-    Box(
-        contentAlignment = Alignment.TopStart,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 70.dp)
-    ) {
+    val context = LocalContext.current
+    var showDescription by remember { mutableStateOf(false) }
+    Column(modifier = Modifier.fillMaxSize().padding(top = 70.dp)) {
         Text(
             text = "主要機構",
-            color = Color.Red
+            color = Color.Red,
         )
+        Row(modifier = Modifier.padding()) {
+            Button(onClick = { showDescription = false }) {
+                Text("台中市愛心家園")
+            }
+            Button(
+                onClick = { showDescription = true },
+                modifier = Modifier.padding()
+            ) {
+                Text("瑪利亞學園")
+            }
+        }
+        if (showDescription == false) {
+            Text(text = "「台中市愛心家園」經市政府公開評選後，委託瑪利亞基金會經營管理，於91年啟用，整棟建築物有四個樓層，目前開辦就醫、就養、就學、就業四大領域的十項業務，提供身心障礙者全方位的服務。\n")
+            Text(
+                text = "長按以下圖片，可以觀看愛心家園地圖",
+                color = Color.Blue,
+            )
+            Image(
+                painter = painterResource(id = R.drawable.lovehome),
+                contentDescription = "愛心家園地圖",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onLongPress = { openGoogleMap(context, "台中市南屯區東興路一段450號") }
+                        )
+                    }
+            )
+        }
+        if (showDescription) {
+            Text(text = "「瑪利亞學園」提供重度以及極重度多重障礙者日間照顧服務，以健康照護為基礎，支持生活多面向參與及學習概念，輔助發展重度身心障礙者自我概念為最終服務目標。\n")
+            Text(
+                text = "雙擊以下圖片，可以觀看瑪利亞學園地圖",
+                color = Color.Blue,
+            )
+            Image(
+                painter = painterResource(id = R.drawable.campus),
+                contentDescription = "瑪利亞學園地圖",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onDoubleTap = {
+                                openGoogleMap(context, "台中市北屯區經貿東路365號")
+                            }
+                        )
+                    }
+            )
+        }
+    }
+}
+fun openGoogleMap(context: Context, address: String) {
+    val gmmIntentUri = Uri.parse("geo:0,0?q=${Uri.encode(address)}")
+    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+    mapIntent.setPackage("com.google.android.apps.maps")
+    if (mapIntent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(mapIntent)
     }
 }
 
