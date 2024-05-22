@@ -116,19 +116,63 @@ fun TopAppBarWithMenu(navController: androidx.navigation.NavController) {
 
 @Composable
 fun FirstScreen(navController: NavController) {
-    Box(
-        contentAlignment = Alignment.TopStart,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 70.dp)
+    var isOriginalState by remember { mutableStateOf(true) }
+    AnimatedVisibility(
+        visible = isOriginalState,
+        enter = fadeIn(animationSpec = tween(3000)),
+        exit = fadeOut(animationSpec = tween(3000))
     ) {
-        Text(
-            text = "簡介",
-            color = Color.Blue
-        )
+        Box(contentAlignment = Alignment.TopStart, modifier = Modifier.fillMaxSize().padding(top = 70.dp)) {
+            Text(text = "瑪利亞基金會服務總覽", color = Color.Blue)
+        }
+    }
+    AnimatedVisibility(
+        visible = !isOriginalState,
+        enter = fadeIn(animationSpec = tween(3000)),
+        exit = fadeOut(animationSpec = tween(3000))
+    ) {
+        Box(contentAlignment = Alignment.TopStart, modifier = Modifier.fillMaxSize().padding(top = 70.dp)) {
+            Text(text = "關於App作者", color = Color.Blue)
+        }
+    }
+    AnimatedVisibility(
+        visible = isOriginalState,
+        enter = fadeIn(animationSpec = tween(3000)),
+        exit = fadeOut(animationSpec = tween(3000))
+    ) {
+        Box(contentAlignment = Alignment.TopStart, modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 90.dp)) {
+            Image(painter = painterResource(id = R.drawable.service), contentDescription = "瑪利亞基金會相關圖片")
+        }
+    }
+    AnimatedVisibility(
+        visible = !isOriginalState,
+        enter = fadeIn(animationSpec = tween(3000)),
+        exit = fadeOut(animationSpec = tween(3000))
+    ) {
+        Box(contentAlignment = Alignment.TopStart, modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 90.dp)) {
+            Image(painter = painterResource(id = R.drawable.me), contentDescription = "這邊放自己的圖片")
+        }
+    }
+
+    AnimatedVisibility(
+        visible = true,
+        enter = fadeIn(animationSpec = tween(3000)),
+        exit = fadeOut(animationSpec = tween(3000))
+    ) {
+        Box(contentAlignment = Alignment.TopStart, modifier = Modifier
+            .fillMaxSize()
+            .padding(top = if (isOriginalState) 400.dp else 570.dp)) {
+            Button(onClick = { isOriginalState = !isOriginalState }) {
+                Text(text = if (isOriginalState) "作者: 資管系吳咏壎" else "服務總覽")
+            }
+        }
     }
 }
-//git commit -m "v2_吳咏壎"
+
 @Composable
 fun SecondScreen(navController: NavController) {
     Box(
@@ -143,3 +187,5 @@ fun SecondScreen(navController: NavController) {
         )
     }
 }
+
+//git commit -m "v3_吳咏壎"
